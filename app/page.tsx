@@ -1,91 +1,79 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+import Card from "@/components/Card"
+import Link from "next/link"
 
-const inter = Inter({ subsets: ['latin'] })
+const ORDER = ['popular', 'latest']
+const CAETGORY = ['backgrounds', 'nature', 'animals', 'places']
+const LIMIT = 10
 
-export default function Home() {
+type ResponseData = {
+  total: number
+  totalHits: number
+  hits: {
+    id: number
+    tags: string
+    views: number
+    downloads: number
+    collections: number
+    likes: number
+    comments: number
+    user: string
+    userImageURL: string
+    pageURL: string
+    largeImageURL: string
+  }[]
+}
+
+
+async function getData(url: string) {
+  const res = await fetch(url);
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  // Recommendation: handle errors
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data');
+  }
+
+  const data: ResponseData = await res.json()
+  return data.hits
+}
+
+
+export default async function Home() {
+  const URL = `https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&orientation=horizontal&category=${CAETGORY.join(',')}&order=${ORDER[Math.floor(Math.random() * ORDER.length)]}&per_page=${LIMIT}`
+  const data = await getData(URL)
+
+  const photo = data[Math.floor(Math.random() * data.length)]
+  const bgImage = photo?.largeImageURL
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className={`text-white h-screen overflow-hidden flex justify-center items-center p-8 bg-cover bg-center`} style={{ backgroundImage: `url(${bgImage})` }}>
+      <Card />
+      <div className="fixed top-0 w-full px-3 py-2 md:px-4 2xl:px-5 2xl:py-3 flex justify-between text-sm font-medium">
+        <Link href={photo.pageURL} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 duration-200">Pixaby</Link>
+        <div className="flex items-center space-x-2 text-xs sm:text-sm">
+          <i className="fa-solid fa-tags"></i>
+          <p className="max-w-[250px] sm:max-w-full truncate">{photo.tags}</p>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
+      <div className="fixed bottom-0 w-full px-3 py-2 md:px-4 2xl:px-5 2xl:py-3 flex justify-between items-center text-sm font-medium">
+        <Link className="max-w-[200px] sm:max-w-full truncate text-xs sm:text-sm" href={photo.userImageURL} target="_blank" rel="noopener noreferrer">Photo by {photo.user}</Link>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col items-center justify-center">
+            <i className="fa-solid fa-eye w-5 h-6 flex justify-center items-center text-base"></i>
+            <p className="text-xs text-center">{photo.views}</p>
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <i className="fa-solid fa-heart w-5 h-6 flex justify-center items-center text-base"></i>
+            <p className="text-xs text-center">{photo.likes}</p>
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <i className="fa-solid fa-comment-dots w-5 h-6 flex justify-center items-center text-base"></i>
+            <p className="text-xs text-center">{photo.comments}</p>
+          </div>
         </div>
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   )
 }
