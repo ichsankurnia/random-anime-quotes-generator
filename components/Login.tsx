@@ -9,18 +9,18 @@ const Login: React.FC<Props> = ({ }) => {
     return (
         <>
             <div className='text-white flex flex-col items-center justify-center h-screen overflow-hidden'>
-                <h2 className='text-lg'><span className='font-bold'>Sign in</span> to continue</h2>
+                <h2 className='text-lg'><span className='font-bold animate-pulse'>Sign in</span> to continue</h2>
                 <div className='flex flex-col w-[20rem] sm:w-[24rem] mx-auto space-y-5 mt-8'>
                     <button className='flex items-center rounded-full space-x-4 backdrop-blur-sm bg-white/30 px-7 py-3 hover-duration'
                         onClick={() => signIn('google')}
                     >
-                        <i className="fa-brands fa-google text-xl hover-rotate"></i>
+                        <i className="fa-brands fa-google text-xl hover-rotate animate-pulse"></i>
                         <p>Sign in with Google</p>
                     </button>
                     <button className='flex items-center rounded-full space-x-4 backdrop-blur-sm bg-white/30 px-7 py-3 hover-duration'
                         onClick={() => signIn('github')}
                     >
-                        <i className="fa-brands fa-github text-xl hover-rotate"></i>
+                        <i className="fa-brands fa-github text-xl hover-rotate animate-pulse"></i>
                         <p>Sign in with Github</p>
                     </button>
                 </div>
