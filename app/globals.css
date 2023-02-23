@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+	.hover-rotate {
+		@apply hover:rotate-[360deg] duration-300 transition-all cursor-pointer
+	}
+	.hover-duration{
+		@apply hover:opacity-70 duration-300
+	}
+}
+
 .loader {
 	border-top-color: rgb(59 130 246 / 1);;
 	-webkit-animation: spinner 1.5s linear infinite;
